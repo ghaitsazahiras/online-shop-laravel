@@ -28,8 +28,7 @@ class ProductController extends Controller
         $validator=Validator::make($request->all(),
         ['product_name' => 'required',
         'description' => 'required',
-        'price' => 'required',
-        'photo' => 'required']); 
+        'price' => 'required']); 
         
         if($validator->fails()){ 
             return Response()->json($validator->errors());
@@ -38,13 +37,59 @@ class ProductController extends Controller
         $save = ProductModel::create([
             'product_name' => $request->product_name,
             'description' => $request->description, 
-            'price' => $request->price,
-            'photo' => $request->photo]);
+            'price' => $request->price]);
             
+        $data = ProductModel::where('product_name', '=', $request->product_name)-> get();
+
         if($save){
-            return Response()->json(['Successfully Add Data']);
-        }else {
-            return Response()->json(['Failed to Add Data']);
+            return Response() -> json([
+                'status' => 1,
+                'message' => 'Succes create new data!',
+                'data' => $data
+            ]);
+        } else 
+        {
+            return Response() -> json([
+                'status' => 0,
+                'message' => 'Failed create data!'
+            ]);
+        }
+    }
+
+    public function upload_photo(Request $req, $id)
+    {
+        $validator = Validator::make($req->all(),[
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+
+        if($validator->fails()){
+            return Response()->json($validator->errors());
+        }
+
+        //define nama file yang akan di upload
+        $imageName = time () .'.'. $req->photo->extension();
+
+        //proses upload
+        $req->photo->move(public_path('images'), $imageName);
+
+        $update=ProductModel::where('product_id',$id)->update([
+            'photo' => $imageName
+        ]);
+
+        $data = ProductModel::where('product_id', '=', $id)-> get();
+
+        if($update){
+            return Response() -> json([
+                'status' => 1,
+                'message' => 'Succes upload photo product!',
+                'data' => $data
+            ]);
+        } else 
+        {
+            return Response() -> json([
+                'status' => 0,
+                'message' => 'Failed upload photo product!'
+            ]);
         }
     }
 
@@ -53,7 +98,8 @@ class ProductController extends Controller
         ['product_name' => 'required',
         'description' => 'required',
         'price' => 'required',
-        'photo' => 'required']);
+        // 'photo' => 'required'
+        ]);
         
         if($validator->fails()) {
             return Response()->json($validator->errors());
@@ -63,7 +109,8 @@ class ProductController extends Controller
             'product_name' => $request->product_name,
             'description' => $request->description, 
             'price' => $request->price,
-            'photo' => $request->photo]);
+            // 'photo' => $request->photo
+        ]);
             
             if($update) {
                 return Response()->json(['Successfully Update Data']);

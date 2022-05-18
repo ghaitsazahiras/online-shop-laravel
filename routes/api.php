@@ -20,19 +20,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/register', 'UserController@register');
 Route::post('/login', 'UserController@login');
 
-// Route::group(['middleware' => ['jwt.verify']], function (){
+Route::group(['middleware' => ['jwt.verify']], function (){
 
-    // Route::group(['middleware' => ['api.superadmin']], function ()
-    // {
+    Route::group(['middleware' => ['api.superadmin']], function ()
+    {
         Route::delete('/customer/{id}', 'CustomerController@destroy');
         Route::delete('/product/{id}', 'ProductController@destroy');
         Route::delete('/admin/{id}', 'AdminController@destroy');
         Route::delete('/order/{id}', 'OrderController@destroy');
         Route::delete('/detail_order/{id}', 'DetailOrderController@destroy');
-    // });
+    });
 
-    // Route::group(['middleware' => ['api.admin']], function ()
-    // {
+    Route::group(['middleware' => ['api.admin']], function ()
+    {
         Route::post('/customer', 'CustomerController@add'); 
         Route::put('/customer/{id}', 'CustomerController@update');
 
@@ -42,16 +42,18 @@ Route::post('/login', 'UserController@login');
         Route::post('/admin', 'AdminController@add');
         Route::put('/admin/{id}', 'AdminController@update');
 
+        Route::post('/storecarttodb', 'OrderController@store');
         Route::post('/order', 'OrderController@add');
         Route::put('/order/{id}', 'OrderController@update');
         
         Route::post('/detail_order', 'DetailOrderController@add');
         Route::put('/detail_order/{id}', 'DetailOrderController@update');
-    // });
+    });
 
     Route::get('/customer', 'CustomerController@show'); 
     Route::get('/customer/{id}', 'CustomerController@detail');
 
+    Route::post("/product/UploadPhoto/{id}","ProductController@upload_photo");
     Route::get('/product', 'ProductController@show'); 
     Route::get('/product/{id}', 'ProductController@detail');
 
@@ -63,4 +65,4 @@ Route::post('/login', 'UserController@login');
 
     Route::get('/detail_order', 'DetailOrderController@show');
     Route::get('detail_order/{id}', 'DetailOrderController@detail');
-// });
+});

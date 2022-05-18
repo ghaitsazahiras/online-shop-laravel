@@ -9,5 +9,5 @@ class DetailOrderModel extends Model
     protected $table = 'detail_order';
     public $timestamps = false;
 
-    protected $fillable = ['order_id', 'product_id', 'qty', 'subtotal'];
+    protected $fillable = ['order_id', 'product_id', 'qty'];
 }

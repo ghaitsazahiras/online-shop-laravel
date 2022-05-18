@@ -8,6 +8,6 @@ class OrderModel extends Model
 {
     protected $table = 'order';
     public $timestamps = false;
-
-    protected $fillable = ['adm_id', 'cust_id', 'date'];
+    protected $primaryKey = 'order_id';
+    protected $fillable = ['adm_id', 'cust_id', 'date', 'subtotal'];
 }

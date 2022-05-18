@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\OrderModel;
+use App\Models\DetailOrderModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -70,6 +71,44 @@ class OrderController extends Controller
                 return Response()->json(['Successfully Update Data']);
             }else{
                 return Response()->json(['Failed to Update Data']);
+            }
+    }
+
+    public function store(Request $request)
+    {
+        $data=array(
+            'date'=>date('Y-m-d'),
+            'subtotal'=>0
+        );
+        $proses=OrderModel::create($data);
+
+        if($proses){
+            $order_id=$proses->order_id;
+            $subtotal=0;
+            foreach ($request->get('datapost') as $gdata){
+                $insert_detail=DetailOrderModel::create([
+                    'order_id'=>$order_id,
+                    'product_id'=>$gdata['product_id'],
+                    'qty'=>$gdata['quantity'],
+                    // 'subtotal'=>$subtotal
+                ]);
+                $subtotal+=$gdata['price']*$gdata['quantity'];
+            }
+            $updatetransaksi=OrderModel::where('order_id', $order_id)->update([
+                'subtotal'=>$subtotal
+            ]);
+            if($proses) {
+                    return Response()->json([
+                        'status'=>1,
+                        'message'=>'Successfully Add Transaction'
+                    ]);
+                }
+                else {
+                    return Response()->json([
+                        'status'=>0,
+                        'message'=>'Failed Add Transaction'
+                    ]);
+                }
             }
     }
 

@@ -12,7 +12,7 @@ class DetailOrderController extends Controller
         $data = DB::table('detail_order')
             ->join('order', 'detail_order.order_id', '=' , 'order.order_id')
             ->join('product', 'detail_order.product_id', '=' , 'product.product_id')
-            ->select('order.order_id', 'order.date', 'order.cust_id', 'product.product_id', 'product.product_name', 'detail_order.qty', 'detail_order.subtotal')
+            ->select('order.order_id', 'order.date', 'order.cust_id', 'product.product_id', 'product.product_name', 'detail_order.qty')
             ->get();
         return Response()->json($data);
     }
@@ -22,7 +22,7 @@ class DetailOrderController extends Controller
             $data_detail = DB::table('detail_order')
             ->join('order', 'detail_order.order_id', '=' , 'order.order_id')
             ->join('product', 'detail_order.product_id', '=' , 'product.product_id')
-            ->select('order.order_id', 'order.date', 'order.cust_id', 'product.product_id', 'product.product_name', 'detail_order.qty', 'detail_order.subtotal')
+            ->select('order.order_id', 'order.date', 'order.cust_id', 'product.product_id', 'product.product_name', 'detail_order.qty')
             ->where('detail_order.detail_id', '=', $id)
             ->get();
             return Response()->json($data_detail);
@@ -44,13 +44,14 @@ class DetailOrderController extends Controller
         $product_id = $request->product_id;
         $qty = $request->qty;
         $price = DB::table('product')->where('product_id', $product_id)->value('price');
-        $subtotal = $price * $qty;
+        // $subtotal = $price * $qty;
 
         $save = DetailOrderModel::create([
             'order_id' => $request->order_id,
             'product_id' => $product_id, 
             'qty' => $qty,
-            'subtotal' => $subtotal]);
+            // 'subtotal' => $subtotal
+        ]);
             
         if($save){
             return Response()->json(['Successfully Add Data']);
@@ -72,13 +73,14 @@ class DetailOrderController extends Controller
         $product_id = $request->product_id;
         $qty = $request->qty;
         $price = DB::table('product')->where('product_id', $product_id)->value('price');
-        $subtotal = $price * $qty;
+        // $subtotal = $price * $qty;
 
         $update = DetailOrderModel::where('detail_id', $id)->update([
             'order_id' => $request->order_id,
             'product_id' => $product_id, 
             'qty' => $qty,
-            'subtotal' => $subtotal]);
+            // 'subtotal' => $subtotal
+        ]);
             
             if($update) {
                 return Response()->json(['Successfully Update Data']);
